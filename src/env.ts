@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const envSchema = z.object({
-	DB_URL: z.string().url().min(1),
-	JWT_SECRET_KEY: z.string().min(1),
-});
+  DB_URL: z.string().url().min(1),
+  JWT_SECRET_KEY: z.string().min(1),
+})
 
-export const env = envSchema.parse(process.env);
+export const env = envSchema.parse(process.env)

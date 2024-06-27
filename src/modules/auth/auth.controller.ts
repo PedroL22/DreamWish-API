@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
 
-
-import type { AuthService } from './auth.service';
+import type { AuthService } from './auth.service'
 
 @Controller('auth')
 export class AuthController {
@@ -11,7 +10,7 @@ export class AuthController {
   @Post('login')
   async signInUser(@Body() signInData: { username: string; password: string }): Promise<{
     message: string
-    data:  { access_token: string }
+    data: { access_token: string }
   }> {
     const result = await this.authService.signIn(signInData)
 
