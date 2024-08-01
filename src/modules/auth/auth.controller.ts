@@ -8,7 +8,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async signInUser(@Body() signInData: { username: string; password: string }): Promise<{
+  async signInUser(@Body() signInData: { credential: string; password: string }): Promise<{
     message: string
     data: { access_token: string }
   }> {

@@ -18,26 +18,32 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async signIn(params: { username: string; password: string }) {
-    const { username, password } = params
+  async signIn(params: { credential: string; password: string }) {
+    const { credential, password } = params
 
     try {
-      const result = await this.usersService.findUserByUsername(username)
+      let user = null
 
-      if (result instanceof NotFoundException) {
-        throw result
+      if (z.string().email().parse(credential)) {
+        user = await this.usersService.findUserByEmail(credential)
+      } else {
+        user = await this.usersService.findUserByUsername(credential)
       }
 
-      const isPasswordValid = await bcrypt.compare(password, result.password)
+      if (user instanceof NotFoundException) {
+        throw user
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password)
 
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials.')
       }
 
       const payload = {
-        id: result.id,
-        username: result.username,
-        isAdmin: result.isAdmin,
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin,
       }
 
       return {

@@ -11,8 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
-import type { users } from '~/db/schema/users'
 import { AuthGuard } from '~/middleware/auth.guard'
+
+import type { users } from '~/db/schema/users'
 import type { UsersService } from './users.service'
 
 type UserModel = typeof users.$inferSelect
