@@ -24,13 +24,17 @@ export class AuthController {
   async registerUser(
     @Body()
     registerData: {
+      email: string
       username: string
       password: string
       passwordConfirmation: string
     }
   ): Promise<{
     message: string
-    data: any
+    data: {
+      id: string
+      username: string
+    }
   }> {
     const result = await this.authService.register(registerData)
 

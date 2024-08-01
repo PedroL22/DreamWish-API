@@ -11,16 +11,29 @@ import {
   UseGuards,
 } from '@nestjs/common'
 
+import type { users } from '~/db/schema/users'
 import { AuthGuard } from '~/middleware/auth.guard'
 import type { UsersService } from './users.service'
+
+type UserModel = typeof users.$inferSelect
 
 @Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(AuthGuard)
+  @Get('users')
+  async getUsers(): Promise<{ data: Partial<UserModel>[] }> {
+    const users = await this.usersService.findAllUsers()
+
+    return {
+      data: users,
+    }
+  }
+
+  @UseGuards(AuthGuard)
   @Get('users/:id')
-  async getUser(@Param('id') id: string): Promise<{ data } | string | object> {
+  async getUserById(@Param('id') id: string): Promise<{ data: Partial<UserModel> } | string | object> {
     const result = await this.usersService.findUserById(id)
 
     if (result instanceof NotFoundException) return result.getResponse()
@@ -31,12 +44,28 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('users')
-  async getUsers(): Promise<{ data }> {
-    const users = await this.usersService.findAllUsers()
+  @Get('users/:email')
+  async getUserByEmail(@Param('email') email: string): Promise<{ data: Partial<UserModel> } | string | object> {
+    const result = await this.usersService.findUserByEmail(email)
+
+    if (result instanceof NotFoundException) return result.getResponse()
 
     return {
-      data: users,
+      data: result,
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('users/:username')
+  async getUserByUsername(
+    @Param('username') username: string
+  ): Promise<{ data: Partial<UserModel> } | string | object> {
+    const result = await this.usersService.findUserByUsername(username)
+
+    if (result instanceof NotFoundException) return result.getResponse()
+
+    return {
+      data: result,
     }
   }
 
@@ -49,7 +78,7 @@ export class UsersController {
     data: {
       username: string
     }
-  ): Promise<{ data } | NotFoundException | UnauthorizedException> {
+  ): Promise<{ data: Partial<UserModel> } | NotFoundException | UnauthorizedException> {
     const isAdmin = req.user.isAdmin
     const isOwner = req.user.id === id
 

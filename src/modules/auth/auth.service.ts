@@ -1,6 +1,13 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import type { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+import { z } from 'zod'
 
 import type { UsersService } from '~/modules/users/users.service'
 
@@ -15,7 +22,7 @@ export class AuthService {
     const { username, password } = params
 
     try {
-      const result = await this.usersService.findUser({ username })
+      const result = await this.usersService.findUserByUsername(username)
 
       if (result instanceof NotFoundException) {
         throw result
@@ -24,11 +31,11 @@ export class AuthService {
       const isPasswordValid = await bcrypt.compare(password, result.password)
 
       if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials password.')
+        throw new UnauthorizedException('Invalid credentials.')
       }
 
       const payload = {
-        userId: result.userId,
+        id: result.id,
         username: result.username,
         isAdmin: result.isAdmin,
       }
@@ -37,34 +44,54 @@ export class AuthService {
         access_token: await this.jwtService.signAsync(payload),
       }
     } catch (error) {
-      throw new UnauthorizedException('Invalid credentials.')
+      if (error instanceof NotFoundException || error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('Invalid credentials.')
+      }
+
+      throw new UnauthorizedException('An error occurred during sign in.')
     }
   }
 
-  async register(params: {
-    username: string
-    password: string
-    passwordConfirmation: string
-  }) {
-    const { username, password, passwordConfirmation } = params
+  async register(params: { email: string; username: string; password: string; passwordConfirmation: string }) {
+    const { email, username, password, passwordConfirmation } = params
+
+    try {
+      z.string().email().parse(email)
+    } catch (err) {
+      throw new BadRequestException('Invalid e-mail format')
+    }
 
     if (password !== passwordConfirmation) {
-      throw new UnauthorizedException('Passwords do not match.')
+      throw new BadRequestException('Passwords do not match.')
     }
 
-    const user = await this.usersService.findUser({ username })
-    if (!(user instanceof NotFoundException)) {
-      throw new UnauthorizedException('Username already taken.')
-    }
+    try {
+      const checkEmail = await this.usersService.findUserByEmail(email)
+      if (checkEmail) {
+        throw new ConflictException('E-mail already taken.')
+      }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+      const checkUsername = await this.usersService.findUserByUsername(username)
+      if (checkUsername) {
+        throw new ConflictException('Username already taken.')
+      }
 
-    const result = await this.usersService.registerUser({
-      username,
-      password: hashedPassword,
-    })
-    if (!(result instanceof UnauthorizedException)) {
-      return { userId: result.userId, username: result.username }
+      const hashedPassword = await this.hashPassword(password)
+      const createdUser = await this.usersService.createUser({ email, username, password: hashedPassword })
+
+      if (!createdUser) {
+        throw new BadRequestException('User creation failed.')
+      }
+
+      if (!(createdUser instanceof ConflictException) && !(createdUser instanceof BadRequestException)) {
+        return { id: createdUser.id, username: createdUser.username }
+      }
+    } catch (error) {
+      throw new BadRequestException('An error occurred during registration.')
     }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10)
   }
 }

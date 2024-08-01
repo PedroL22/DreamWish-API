@@ -1,5 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { eq } from 'drizzle-orm'
+import { z } from 'zod'
+
 import { db } from '~/db/connection'
 import { users } from '~/db/schema/users'
 
@@ -9,6 +11,32 @@ type UserModel = typeof users.$inferSelect
 export class UsersService {
   async findUserById(id: string): Promise<Partial<UserModel> | NotFoundException> {
     const user = await db.select().from(users).where(eq(users.id, id))
+
+    if (!user) {
+      return new NotFoundException('User not found.')
+    }
+
+    return user[0]
+  }
+
+  async findUserByUsername(username: string): Promise<Partial<UserModel> | NotFoundException> {
+    const user = await db.select().from(users).where(eq(users.username, username))
+
+    if (!user) {
+      return new NotFoundException('User not found.')
+    }
+
+    return user[0]
+  }
+
+  async findUserByEmail(email: string): Promise<Partial<UserModel> | NotFoundException> {
+    try {
+      z.string().email().parse(email)
+    } catch (err) {
+      throw new BadRequestException('Invalid e-mail format')
+    }
+
+    const user = await db.select().from(users).where(eq(users.email, email))
 
     if (!user) {
       return new NotFoundException('User not found.')
@@ -45,10 +73,28 @@ export class UsersService {
   }
 
   async createUser(data: Partial<UserModel>): Promise<Partial<UserModel> | ConflictException | BadRequestException> {
-    const checkIfUserExists = await db.select().from(users).where(eq(users.email, data.email))
+    try {
+      z.object({
+        email: z.string({ required_error: 'E-mail is required.' }).email('Invalid e-mail format.'),
+        username: z.string({ required_error: 'Username is required.' }),
+        phone: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        password: z.string({ required_error: 'Password is required.' }),
+        isAdmin: z.boolean().optional(),
+      }).parse(data)
+    } catch (err) {
+      throw new BadRequestException(err)
+    }
 
-    if (checkIfUserExists.length) {
+    const checkEmail = await db.select().from(users).where(eq(users.email, data.email))
+    if (checkEmail.length) {
       return new ConflictException('User already exists.')
+    }
+
+    const checkUsername = await db.select().from(users).where(eq(users.username, data.username))
+    if (checkUsername.length) {
+      return new ConflictException('Username already taken.')
     }
 
     if (!data.username) {
@@ -62,6 +108,8 @@ export class UsersService {
       phone: data.phone,
       firstName: data.firstName,
       lastName: data.lastName,
+      password: data.password,
+      isAdmin: data.isAdmin,
       createdAt: new Date(),
       updatedAt: null,
     }
