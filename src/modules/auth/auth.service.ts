@@ -5,11 +5,11 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
-import type { JwtService } from '@nestjs/jwt'
+import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { z } from 'zod'
 
-import type { UsersService } from '~/modules/users/users.service'
+import { UsersService } from '~/modules/users/users.service'
 
 @Injectable()
 export class AuthService {

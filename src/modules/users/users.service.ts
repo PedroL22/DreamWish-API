@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 import { db } from '~/db/connection'
-import { users } from '~/db/schema/users'
+import { users } from '~/db/schema'
 
 type UserModel = typeof users.$inferSelect
 

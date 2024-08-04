@@ -6,6 +6,7 @@
     "module": "CommonJS",
     "moduleDetection": "force",
     "allowJs": true,
+    "esModuleInterop": true,
 
     // Bundler mode
     "allowImportingTsExtensions": false,

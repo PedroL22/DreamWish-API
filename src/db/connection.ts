@@ -3,7 +3,7 @@ import postgres from 'postgres'
 
 import { env } from '~/env'
 
-import { users } from './schema/users'
+import { users } from './schema'
 
 const client = postgres(env.DB_URL)
 
