@@ -3,59 +3,45 @@ import { Hono } from 'hono'
 import { setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 import { sign } from 'hono/jwt'
-import { z } from 'zod'
 
 import { HomeController } from '~/controllers/home.controller'
+import { loginSchema, registerSchema } from '~/models/user.model'
+import { UserService } from '~/services/user.service'
 
 const authRoutes = new Hono()
 const homeController = new HomeController()
+const userService = new UserService()
 
 authRoutes.get('/', homeController.healthCheck.bind(homeController))
 
-const users = [] as any[]
-
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  nome: z.string().min(3),
-})
-
 authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
-  const { email, password, nome } = c.req.valid('json')
+  const { email, username, password, passwordConfirmation } = c.req.valid('json')
 
-  if (users.find((user) => user.email === email)) {
-    throw new HTTPException(400, { message: 'Email already registered.' })
+  try {
+    await userService.createUser({ email, username, password, passwordConfirmation })
+
+    return c.json({ message: 'User registered successfully.' }, 201)
+  } catch (error) {
+    throw new HTTPException(500, { message: 'Failed to register user.' })
   }
-
-  const newUser = {
-    id: users.length + 1,
-    email,
-    password,
-    nome,
-  }
-  users.push(newUser)
-
-  return c.json({ message: 'User registered successfully.' }, 201)
-})
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
 })
 
 authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
   const { email, password } = c.req.valid('json')
 
-  const user = users.find((user) => user.email === email)
+  const user = await userService.findUserByEmail(email)
+  if (!user) {
+    throw new HTTPException(401, { message: 'Invalid credentials.' })
+  }
 
-  if (!user || user.password !== password) {
+  if (!(await userService.verifyPassword(password, user.password))) {
     throw new HTTPException(401, { message: 'Invalid credentials.' })
   }
 
   const payload = {
     id: user.id,
     email: user.email,
-    nome: user.nome,
+    username: user.username,
     exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
   }
 

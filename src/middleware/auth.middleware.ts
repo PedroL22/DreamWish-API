@@ -1,15 +1,20 @@
 import type { Context, Next } from 'hono'
+import { verify } from 'hono/jwt'
 
 export async function authMiddleware(c: Context, next: Next) {
-  const token = c.req.header('Authorization')?.split(' ')[1]
-
-  if (!token) {
-    return c.json({ mensagem: 'Authentication token not provided.' }, 401)
-  }
-
   try {
+    const authorization = c.req.header('Authorization')
+
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      return c.json({ message: 'Unauthorized' }, 401)
+    }
+
+    const token = authorization.split(' ')[1]
+    const payload = await verify(token, Bun.env.JWT_SECRET!)
+
+    c.set('user', payload)
     await next()
   } catch (error) {
-    return c.json({ mensagem: 'Invalid authentication token.' }, 401)
+    return c.json({ message: 'Unauthorized' }, 401)
   }
 }
