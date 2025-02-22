@@ -15,7 +15,7 @@ const schema = z.object({
 
 app.use(logger())
 
-app.get('/login', zValidator('json', schema), async (c) => {
+app.post('/login', zValidator('json', schema), async (c) => {
   const { email, password } = await c.req.json()
 
   if (password !== 'testing') {
@@ -34,7 +34,4 @@ app.get('/login', zValidator('json', schema), async (c) => {
   return c.json({ payload, token })
 })
 
-Bun.serve({
-  fetch: app.fetch,
-  port: Bun.env.PORT || 3030,
-})
+export default app

@@ -1,20 +1,20 @@
 {
-	"name": "dreamwish-api",
-	"module": "index.ts",
-	"type": "module",
-	"scripts": {
-		"dev": "biome lint --write && biome format --write && bun run src/index.ts --watch",
-		"lint": "biome lint --write && biome format --write"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@types/bun": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^5.0.0"
-	},
-	"dependencies": {
-		"@hono/zod-validator": "^0.4.3",
-		"hono": "^4.7.2"
-	}
+  "name": "dreamwish-api",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "biome lint --write && biome format --write && bun run src/index.ts --watch",
+    "lint": "biome lint --write && biome format --write"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.3",
+    "hono": "^4.7.2"
+  }
 }
