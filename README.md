@@ -1,4 +1,4 @@
-# dreamwish-api
+# DreamWish-API
 
 To install dependencies:
 
