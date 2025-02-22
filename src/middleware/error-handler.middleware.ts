@@ -6,10 +6,6 @@ export async function errorHandlerMiddleware(c: Context, next: Next) {
   } catch (err: any) {
     console.error(err)
 
-    if (err instanceof Error) {
-      return c.json({ message: err.message }, 500)
-    }
-
     return c.json({ message: 'Internal Server Error' }, 500)
   }
 }

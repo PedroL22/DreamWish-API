@@ -18,7 +18,6 @@ export class UserService {
     try {
       return await argon2.verify(hashedPassword, inputPassword)
     } catch (error) {
-      // In production, a generic error message is preferred.
       return false
     }
   }
@@ -44,7 +43,6 @@ export class UserService {
   }
 
   async createUser(userData: Register): Promise<Omit<User, 'password' | 'updatedAt' | 'bio'>> {
-    // Hash the password using argon2 instead of HMAC
     const hashedPassword = await argon2.hash(userData.password)
 
     const newUser: Omit<User, 'updatedAt' | 'bio'> = {
