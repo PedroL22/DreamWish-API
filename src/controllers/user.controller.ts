@@ -12,8 +12,8 @@ export class UserController {
   }
 
   async createUser(c: Context): Promise<Response> {
-    const dadosUser = await c.req.json()
-    const newUser = await this.userService.createUser(dadosUser)
+    const userData = await c.req.json()
+    const newUser = await this.userService.createUser(userData)
 
     return c.json(newUser, 201)
   }

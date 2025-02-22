@@ -9,12 +9,8 @@ const app = new Hono()
 
 app.use(errorHandlerMiddleware)
 
-app.route('/api', apiRoutes)
 app.route('/auth', authRoutes)
-
-app.get('/', (c) => {
-  return c.text('Backend MVC with Bun and Hono is running!')
-})
+app.route('/api', apiRoutes)
 
 Bun.serve({
   port: appConfig.port,

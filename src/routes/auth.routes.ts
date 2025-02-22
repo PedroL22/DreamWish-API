@@ -5,7 +5,12 @@ import { HTTPException } from 'hono/http-exception'
 import { sign } from 'hono/jwt'
 import { z } from 'zod'
 
+import { HomeController } from '~/controllers/home.controller'
+
 const authRoutes = new Hono()
+const homeController = new HomeController()
+
+authRoutes.get('/', homeController.healthCheck.bind(homeController))
 
 const users = [] as any[]
 
@@ -51,7 +56,7 @@ authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
     id: user.id,
     email: user.email,
     nome: user.nome,
-    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
   }
 
   const token = await sign(payload, Bun.env.JWT_SECRET!)
