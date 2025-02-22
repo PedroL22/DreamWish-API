@@ -1,6 +1,7 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import { setCookie } from 'hono/cookie'
+import { bearerAuth } from 'hono/bearer-auth'
+import { getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 import { sign } from 'hono/jwt'
 import { logger } from 'hono/logger'
@@ -32,6 +33,26 @@ app.post('/login', zValidator('json', schema), async (c) => {
   setCookie(c, 'token', token)
 
   return c.json({ payload, token })
+})
+
+app.use(
+  '/index/*',
+  bearerAuth({
+    verifyToken: async (token, c) => {
+      return token === getCookie(c, 'token')
+    },
+  })
+)
+
+app.get('/index/movies', (c) => {
+  return c.json({
+    movies: [
+      { title: 'The Godfather', year: 1972 },
+      { title: 'The Godfather: Part II', year: 1974 },
+      { title: 'The Dark Knight', year: 2008 },
+      { title: '12 Angry', year: 1957 },
+    ],
+  })
 })
 
 export default app
