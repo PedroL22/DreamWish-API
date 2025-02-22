@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch run src/index.ts",
-    "lint": "biome lint --write && biome format --write"
+    "lint": "biome lint --write && biome format --write",
+    "build": "bun build src/index.ts --outfile dist/index.js --target bun"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
