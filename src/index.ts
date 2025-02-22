@@ -19,4 +19,4 @@ Bun.serve({
   fetch: app.fetch,
 })
 
-console.log(`✨ Server running at http://localhost:${appConfig.port}`)
+console.log(`✨ Server running at ${appConfig.currentURL}`)
