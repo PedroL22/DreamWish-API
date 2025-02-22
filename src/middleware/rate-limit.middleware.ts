@@ -27,8 +27,6 @@ function getClientIP(c: Context): string {
 export async function rateLimitMiddleware(c: Context, next: Next) {
   const ip = getClientIP(c)
 
-  console.log(`Rate limit check for IP: ${ip}`)
-
   const now = Date.now()
   const record = rateLimitStore.get(ip) || { count: 0, time: now }
 

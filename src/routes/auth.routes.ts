@@ -4,14 +4,11 @@ import { setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 import { sign } from 'hono/jwt'
 
-import { rateLimitMiddleware } from '~/middleware/rate-limit.middleware'
 import { HomeController } from '~/controllers/home.controller'
 import { loginSchema, registerSchema } from '~/models/user.model'
 import { UserService } from '~/services/user.service'
 
 const authRoutes = new Hono()
-
-authRoutes.use(rateLimitMiddleware)
 
 const homeController = new HomeController()
 const userService = new UserService()
