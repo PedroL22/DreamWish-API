@@ -7,6 +7,7 @@ import { sign } from 'hono/jwt'
 import { HomeController } from '~/controllers/home.controller'
 import { loginDTO } from '~/dtos/users/login.dto'
 import { registerDTO } from '~/dtos/users/register.dto'
+import { env } from '~/env'
 import { UserService } from '~/services/user.service'
 
 const authRoutes = new Hono()
@@ -47,7 +48,7 @@ authRoutes.post('/login', zValidator('json', loginDTO), async (c) => {
     exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour
   }
 
-  const token = await sign(payload, Bun.env.JWT_SECRET!)
+  const token = await sign(payload, env.JWT_SECRET!)
 
   setCookie(c, 'token', token, {
     httpOnly: true,

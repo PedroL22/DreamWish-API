@@ -1,6 +1,8 @@
 import type { Context, Next } from 'hono'
 import { verify } from 'hono/jwt'
 
+import { env } from '~/env'
+
 export async function authMiddleware(c: Context, next: Next) {
   try {
     const authorization = c.req.header('Authorization')
@@ -10,7 +12,7 @@ export async function authMiddleware(c: Context, next: Next) {
     }
 
     const token = authorization.split(' ')[1]
-    const payload = await verify(token, Bun.env.JWT_SECRET!)
+    const payload = await verify(token, env.JWT_SECRET!)
 
     c.set('user', payload)
 
