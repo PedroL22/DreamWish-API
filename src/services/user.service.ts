@@ -1,13 +1,11 @@
 import argon2 from 'argon2'
+import { eq } from 'drizzle-orm'
 import { randomUUID } from 'node:crypto'
 
 import { db } from '~/database'
 import { users } from '~/database/schema'
 
-import { type InferSelectModel, eq } from 'drizzle-orm'
-import type { Register } from '~/models/user.model'
-
-type User = InferSelectModel<typeof users>
+import type { Register, User } from '~/models/user.model'
 
 export class UserService {
   async listUsers(): Promise<User[]> {
@@ -54,6 +52,7 @@ export class UserService {
 
     await db.insert(users).values(newUser).execute()
     const { password, ...userWithoutPassword } = newUser
+
     return userWithoutPassword
   }
 }

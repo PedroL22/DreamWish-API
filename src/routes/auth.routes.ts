@@ -5,7 +5,8 @@ import { HTTPException } from 'hono/http-exception'
 import { sign } from 'hono/jwt'
 
 import { HomeController } from '~/controllers/home.controller'
-import { loginSchema, registerSchema } from '~/models/user.model'
+import { loginDTO } from '~/dtos/users/login.dto'
+import { registerDTO } from '~/dtos/users/register.dto'
 import { UserService } from '~/services/user.service'
 
 const authRoutes = new Hono()
@@ -15,7 +16,7 @@ const userService = new UserService()
 
 authRoutes.get('/', homeController.healthCheck.bind(homeController))
 
-authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
+authRoutes.post('/register', zValidator('json', registerDTO), async (c) => {
   const { email, username, password, passwordConfirmation } = c.req.valid('json')
 
   try {
@@ -27,7 +28,7 @@ authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
   }
 })
 
-authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
+authRoutes.post('/login', zValidator('json', loginDTO), async (c) => {
   const { email, password } = c.req.valid('json')
 
   const user = await userService.findUserByEmail(email)

@@ -13,6 +13,7 @@ export async function authMiddleware(c: Context, next: Next) {
     const payload = await verify(token, Bun.env.JWT_SECRET!)
 
     c.set('user', payload)
+
     await next()
   } catch (error) {
     return c.json({ message: 'Unauthorized' }, 401)
