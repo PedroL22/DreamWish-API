@@ -6,7 +6,7 @@
     "dev": "bun --watch run src/index.ts",
     "lint": "biome lint --write && biome format --write",
     "build": "bun install && bun build src/index.ts --outfile dist/index.js --target bun",
-    "start": "bun dist/index.js"
+    "start": "bun src/index.ts"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
