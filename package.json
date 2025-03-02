@@ -6,7 +6,9 @@
     "dev": "bun --watch run src/index.ts",
     "lint": "biome lint --write && biome format --write",
     "build": "bun install && bun build src/index.ts --outfile dist/index.js --target bun",
-    "start": "bun src/index.ts"
+    "start": "bun src/index.ts",
+    "generate": "bunx --bun drizzle-kit generate",
+    "migrate": "bunx --bun drizzle-kit migrate"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
