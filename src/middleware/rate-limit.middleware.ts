@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono'
 
 const rateLimitStore = new Map<string, { count: number; time: number }>()
-const WINDOW_MS = 15 * 60 * 1000
+const WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 const MAX_REQUESTS = 50
 
 function getClientIP(c: Context): string {
