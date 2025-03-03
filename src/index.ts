@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { logger } from 'hono/logger'
 
 import { appConfig } from '~/config/config'
 import { errorHandlerMiddleware } from '~/middleware/error-handler.middleware'
@@ -7,6 +8,7 @@ import { apiRoutes } from '~/routes'
 
 const app = new Hono()
 
+app.use(logger())
 app.use(errorHandlerMiddleware)
 app.use(rateLimitMiddleware)
 
