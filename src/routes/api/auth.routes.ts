@@ -59,4 +59,4 @@ authRoutes.post('/login', zValidator('json', loginDTO), async (c) => {
   return c.json({ payload, token })
 })
 
-export default authRoutes
+export { authRoutes }
