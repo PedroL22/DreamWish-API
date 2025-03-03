@@ -11,7 +11,7 @@ export const registerDTO = z
       .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
       .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
       .regex(
-        /[\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\\\|\,\.\?\/\`\'\~]/,
+        /[\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\\\|\,\.\?\/\`\'\~\<\>]/,
         'Password must contain at least one special character.'
       ),
     passwordConfirmation: z.string(),

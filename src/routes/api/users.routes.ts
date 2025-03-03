@@ -11,7 +11,7 @@ const userController = new UserController(userService)
 
 usersRoutes.use(authMiddleware)
 
-usersRoutes.get('/users', userController.listUsers.bind(userController))
-usersRoutes.post('/users', userController.createUser.bind(userController))
+usersRoutes.get('/', userController.listUsers.bind(userController))
+usersRoutes.post('/', userController.createUser.bind(userController))
 
 export { usersRoutes }

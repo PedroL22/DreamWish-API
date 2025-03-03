@@ -1,6 +1,7 @@
-import { randomUUID } from 'node:crypto'
 import argon2 from 'argon2'
 import { eq } from 'drizzle-orm'
+import { randomUUID } from 'node:crypto'
+import { z } from 'zod'
 
 import { db } from '~/database'
 import { users } from '~/database/schema'
@@ -20,8 +21,11 @@ export class UserService {
     }
   }
 
-  async findUserByEmail(email: string): Promise<Omit<User, 'updatedAt' | 'bio'> | undefined> {
+  async findUserByCredential(credential: string): Promise<Omit<User, 'updatedAt' | 'bio'> | undefined> {
     try {
+      const isEmail = z.string().email().safeParse(credential).success
+      const condition = isEmail ? eq(users.email, credential) : eq(users.username, credential)
+
       const [user] = await db
         .select({
           id: users.id,
@@ -31,7 +35,7 @@ export class UserService {
           createdAt: users.createdAt,
         })
         .from(users)
-        .where(eq(users.email, email))
+        .where(condition)
         .limit(1)
 
       return user

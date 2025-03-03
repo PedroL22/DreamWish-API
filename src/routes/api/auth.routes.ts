@@ -20,6 +20,13 @@ authRoutes.get('/', homeController.healthCheck.bind(homeController))
 authRoutes.post('/register', zValidator('json', registerDTO), async (c) => {
   const { email, username, password, passwordConfirmation } = c.req.valid('json')
 
+  const existingByEmail = await userService.findUserByCredential(email)
+  const existingByUsername = await userService.findUserByCredential(username)
+
+  if (existingByEmail || existingByUsername) {
+    throw new HTTPException(409, { message: 'User already exists.' })
+  }
+
   try {
     await userService.createUser({ email, username, password, passwordConfirmation })
 
@@ -30,9 +37,10 @@ authRoutes.post('/register', zValidator('json', registerDTO), async (c) => {
 })
 
 authRoutes.post('/login', zValidator('json', loginDTO), async (c) => {
-  const { email, password } = c.req.valid('json')
+  const { credential, password } = c.req.valid('json')
 
-  const user = await userService.findUserByEmail(email)
+  const user = await userService.findUserByCredential(credential)
+
   if (!user) {
     throw new HTTPException(401, { message: 'Invalid credentials.' })
   }
