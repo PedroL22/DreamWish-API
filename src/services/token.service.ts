@@ -60,6 +60,14 @@ export class TokenService {
 
   async cleanupExpiredTokens() {
     const now = new Date()
-    return db.delete(refreshTokens).where(lt(refreshTokens.expiresAt, now))
+
+    try {
+      const result = await db.delete(refreshTokens).where(lt(refreshTokens.expiresAt, now))
+
+      console.log(`✅ Cleanup completed: ${result.rowCount} expired tokens removed.`)
+      return result
+    } catch (error) {
+      console.error('❌ Error during expired tokens cleanup:', error)
+    }
   }
 }
