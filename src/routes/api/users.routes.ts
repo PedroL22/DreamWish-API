@@ -6,10 +6,10 @@ import { UserService } from '~/services/user.service'
 
 const usersRoutes = new Hono()
 
+usersRoutes.use(authMiddleware)
+
 const userService = new UserService()
 const userController = new UserController(userService)
-
-usersRoutes.use(authMiddleware)
 
 usersRoutes.get('/', userController.listUsers.bind(userController))
 usersRoutes.post('/', userController.createUser.bind(userController))

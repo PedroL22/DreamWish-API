@@ -33,6 +33,7 @@ export class UserService {
           username: users.username,
           password: users.password,
           createdAt: users.createdAt,
+          role: users.role,
         })
         .from(users)
         .where(condition)
@@ -44,10 +45,10 @@ export class UserService {
     }
   }
 
-  async createUser(userData: Register): Promise<Omit<User, 'password' | 'updatedAt' | 'bio'>> {
+  async createUser(userData: Register): Promise<Omit<User, 'password' | 'updatedAt' | 'bio' | 'role'>> {
     const hashedPassword = await argon2.hash(userData.password)
 
-    const newUser: Omit<User, 'updatedAt' | 'bio'> = {
+    const newUser: Omit<User, 'updatedAt' | 'bio' | 'role'> = {
       id: randomUUID(),
       ...userData,
       password: hashedPassword,
