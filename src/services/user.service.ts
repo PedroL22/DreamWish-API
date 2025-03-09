@@ -22,27 +22,39 @@ export class UserService {
   }
 
   async findUserByCredential(credential: string): Promise<Omit<User, 'updatedAt' | 'bio'> | undefined> {
-    try {
-      const isEmail = z.string().email().safeParse(credential).success
-      const condition = isEmail ? eq(users.email, credential) : eq(users.username, credential)
+    const isEmail = z.string().email().safeParse(credential).success
+    const condition = isEmail ? eq(users.email, credential) : eq(users.username, credential)
 
-      const [user] = await db
-        .select({
-          id: users.id,
-          email: users.email,
-          username: users.username,
-          password: users.password,
-          createdAt: users.createdAt,
-          role: users.role,
-        })
-        .from(users)
-        .where(condition)
-        .limit(1)
+    const [user] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        username: users.username,
+        password: users.password,
+        createdAt: users.createdAt,
+        role: users.role,
+      })
+      .from(users)
+      .where(condition)
+      .limit(1)
 
-      return user
-    } catch {
-      return undefined
-    }
+    return user
+  }
+
+  async findUserById(id: string): Promise<Omit<User, 'updatedAt' | 'bio'> | undefined> {
+    const [user] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        username: users.username,
+        password: users.password,
+        createdAt: users.createdAt,
+        role: users.role,
+      })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1)
+    return user
   }
 
   async createUser(userData: Register): Promise<Omit<User, 'password' | 'updatedAt' | 'bio' | 'role'>> {

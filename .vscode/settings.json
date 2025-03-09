@@ -2,5 +2,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "never"
   },
-  "cSpell.words": ["bunx", "dreamwish", "dtos", "fastly", "nginx"]
+  "cSpell.words": ["bunx", "dreamwish", "dtos", "fastly", "nginx", "noemit"]
 }

@@ -1,4 +1,4 @@
-import { numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, numeric, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const userRoleEnum = pgEnum('user_role', ['client', 'admin'])
 
@@ -11,6 +11,19 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at'),
   bio: text('bio'),
   role: userRoleEnum('role').notNull().default('client'),
+})
+
+export const refreshTokens = pgTable('refresh_tokens', {
+  id: text('id').primaryKey(),
+  userId: uuid('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  isValid: boolean('is_valid').default(true).notNull(),
+  userAgent: text('user_agent'),
+  ipAddress: text('ip_address'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at'),
 })
 
 export const wishlists = pgTable('wishlists', {
