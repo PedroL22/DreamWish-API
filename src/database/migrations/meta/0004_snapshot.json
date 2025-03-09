@@ -65,12 +65,8 @@
           "name": "refresh_tokens_user_id_users_id_fk",
           "tableFrom": "refresh_tokens",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -144,16 +140,12 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "users_username_unique": {
           "name": "users_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       },
       "policies": {},
@@ -220,12 +212,8 @@
           "name": "wishes_wishlist_id_wishlists_id_fk",
           "tableFrom": "wishes",
           "tableTo": "wishlists",
-          "columnsFrom": [
-            "wishlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["wishlist_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -284,12 +272,8 @@
           "name": "wishlists_user_id_users_id_fk",
           "tableFrom": "wishlists",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -305,10 +289,7 @@
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "client",
-        "admin"
-      ]
+      "values": ["client", "admin"]
     }
   },
   "schemas": {},
