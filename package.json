@@ -4,12 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch run src/index.ts",
-    "lint": "biome lint --write && biome format --write",
+    "lint": "biome lint --write",
+    "format": "biome format --write",
     "build": "bun install && bun build src/index.ts --outfile dist/index.js --target bun",
     "start": "bun src/index.ts",
     "watch": "tsc --w --noemit",
     "generate": "bunx --bun drizzle-kit generate",
-    "migrate": "bunx --bun drizzle-kit migrate"
+    "migrate": "bunx --bun drizzle-kit migrate",
+    "prepare": "husky"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -29,6 +31,7 @@
     "@types/bun": "latest",
     "@types/pg": "^8.11.11",
     "drizzle-kit": "^0.30.5",
+    "husky": "^9.1.7",
     "tsx": "^4.19.3"
   }
 }
