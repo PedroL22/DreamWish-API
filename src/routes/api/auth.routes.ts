@@ -1,9 +1,9 @@
+import { randomUUID } from 'node:crypto'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { HTTPException } from 'hono/http-exception'
 import { sign, verify } from 'hono/jwt'
-import { nanoid } from 'nanoid'
 
 import { HomeController } from '~/controllers/home.controller'
 import { loginDTO } from '~/dtos/users/login.dto'
@@ -55,8 +55,8 @@ authRoutes.post('/login', zValidator('json', loginDTO), async (c) => {
     throw new HTTPException(401, { message: 'Invalid credentials.' })
   }
 
-  const accessJti = nanoid()
-  const refreshJti = nanoid()
+  const accessJti = randomUUID()
+  const refreshJti = randomUUID()
 
   const accessPayload = {
     id: user.id,
@@ -141,8 +141,8 @@ authRoutes.post('/refresh', async (c) => {
       throw new HTTPException(401, { message: 'User not found.' })
     }
 
-    const newAccessJti = nanoid()
-    const newRefreshJti = nanoid()
+    const newAccessJti = randomUUID()
+    const newRefreshJti = randomUUID()
 
     const newAccessPayload = {
       id: user.id,
